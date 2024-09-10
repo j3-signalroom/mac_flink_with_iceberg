@@ -22,6 +22,17 @@ RUN curl -L https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.26.9/
 # Install Nano to edit files
 RUN apt update && apt install -y nano
 
+# Install python3 and pip3
+# Install libbz2-dev, a development package for the bzip2 library (libbz2), which is used for compressing and decompressing data using the Burrows-Wheeler block-sorting text compression algorithm and Huffman coding.
+# Install libffi-dev, a development package for the libffi library, which provides a portable, high-level programming interface to various calling conventions.
+# Install libssl-dev, a development package for the OpenSSL library, which is a general-purpose cryptography library that provides an open-source implementation of the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols.
+# Install zlib1g-dev, a development package for the zlib library, which is a software library used for data compression.
+# Install openjdk-17-jdk-headless, a headless version of the OpenJDK 17 Java Development Kit (JDK) that does not include any graphical user interface (GUI) libraries or tools.
+# ***The above packages are required for building and installing PyFlink.***
+RUN apt-get update -y && apt-get install -y python3 python3-pip python3-dev openjdk-17-jdk-headless libbz2-dev libffi-dev libssl-dev zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/python3 /usr/bin/python
+    
 # Set JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
