@@ -24,12 +24,13 @@ To run the Docker container locally:
     b. Open a terminal in this directory.
 
     c. Execute the following [script](scripts/run-flink-locally.sh):
-    ```shell
-    scripts/run-flink-locally.sh --profile=<AWS_SSO_PROFILE_NAME>
+    ```bash
+    scripts/run-flink-locally.sh --profile=<AWS_SSO_PROFILE_NAME> [--aws_s3_bucket=<AWS_S3_BUCKET_NAME>]
     ```
     Argument placeholder|Replace with
     -|-
     `<AWS_SSO_PROFILE_NAME>`|your AWS SSO profile name for your AWS infrastructue that host your AWS Secrets Manager.
+    `<AWS_S3_BUCKET_NAME>`|**[Optional]** can specify the name of the AWS S3 bucket used to store Apache Iceberg files.
 
 ## 2.0 Resources
 
