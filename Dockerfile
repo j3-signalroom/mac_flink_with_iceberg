@@ -1,16 +1,48 @@
 # Base image from https://nightlies.apache.org/flink/flink-docs-release-1.20/docs/deployment/resource-providers/standalone/docker/
 FROM arm64v8/flink:1.20.0-scala_2.12-java17
 
-# Install python3 and pip3
+# Container environment variable(s)
+ENV PYTHON_VERSION=3.11
+ENV PYTHON_PATCH=.9
+ENV PYTHON_VERION_WITH_PATCH=${PYTHON_VERSION}${PYTHON_PATCH}
+
+# Container metadata
+LABEL maintainer="j3@thej3.com" \
+      description="Apache Flink 1.20 container with Python 3.11.9 installed."
+
+# Install Python dependencies and whatever utilities are needed to install Python from source
 # Install libbz2-dev, a development package for the bzip2 library (libbz2), which is used for compressing and decompressing data using the Burrows-Wheeler block-sorting text compression algorithm and Huffman coding.
 # Install libffi-dev, a development package for the libffi library, which provides a portable, high-level programming interface to various calling conventions.
 # Install libssl-dev, a development package for the OpenSSL library, which is a general-purpose cryptography library that provides an open-source implementation of the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols.
 # Install zlib1g-dev, a development package for the zlib library, which is a software library used for data compression.
 # Install openjdk-17-jdk-headless, a headless version of the OpenJDK 17 Java Development Kit (JDK) that does not include any graphical user interface (GUI) libraries or tools.
-# ***The above packages are required for building and installing PyFlink.***
-RUN apt-get update -y && apt-get install -y python3 python3-pip python3-dev openjdk-17-jdk-headless libbz2-dev libffi-dev libssl-dev zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    ln -s /usr/bin/python3 /usr/bin/python
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    openjdk-17-jdk-headless \
+    zlib1g-dev \
+    libbz2-dev \
+    libpq-dev \
+    libncurses5-dev \
+    libgdbm-dev \
+    liblzma-dev \
+    libnss3-dev \
+    libssl-dev \
+    libsqlite3-dev \
+    libreadline-dev \
+    libffi-dev \
+    wget \
+    git \
+    python3-pip \
+    python3-venv
+
+# Install Python from source
+RUN cd /usr/local && \
+    wget https://www.python.org/ftp/python/${PYTHON_VERION_WITH_PATCH}/Python-${PYTHON_VERION_WITH_PATCH}.tgz && \
+    tar -xf Python-${PYTHON_VERION_WITH_PATCH}.tgz && \
+    cd Python-${PYTHON_VERION_WITH_PATCH} && \
+    ./configure --enable-optimizations && \
+    make -j$(nproc) && \
+    make altinstall
     
 # Set JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
