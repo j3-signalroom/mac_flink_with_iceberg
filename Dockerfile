@@ -75,16 +75,22 @@ RUN curl -L https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.27.9/
 RUN apt update && apt install -y nano
 
 # Install PyFlink, PyIceberg, AWS SDK, and other Python dependencies
-RUN python3.11 -m pip install --upgrade pip
-RUN python3.11 -m pip install pipenv
+WORKDIR /opt/flink/python_apps
 RUN python3.11 -m venv .venv
 RUN . .venv/bin/activate
+RUN python3.11 -m pip install --upgrade pip
+RUN python3.11 -m pip install pipenv
 RUN pipenv --python 3.11 install "grpcio-tools>=1.29.0,<=1.50.0"
 RUN pipenv --python 3.11 install setuptools>=37.0.0
 RUN pipenv --python 3.11 install apache-flink==1.20.0
 RUN pipenv --python 3.11 install pyiceberg
 RUN pipenv --python 3.11 install boto3
+RUN pipenv --python 3.11 install botocore==1.35.16
+RUN pipenv --python 3.11 install aiobotocore==2.15.0
 RUN pipenv --python 3.11 install s3fs
+
+# This action forces the installation of the latest version of the AWS SDK
+RUN pip install boto3
 
 # Set the entrypoint to Flink's entrypoint script
 ENTRYPOINT ["/docker-entrypoint.sh"]
