@@ -44,6 +44,7 @@ RUN cd /usr/local && \
     make -j$(nproc) && \
     make altinstall
 
+# Create a symbolic link to the Python 3.11.9 binary
 RUN ln -s /usr/local/Python-3.11.9 /usr/bin/python
 
 # Set the PATH environment variable with the path to the Python 3.11.9 binary
