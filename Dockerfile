@@ -43,7 +43,12 @@ RUN cd /usr/local && \
     ./configure --enable-optimizations && \
     make -j$(nproc) && \
     make altinstall
-    
+
+RUN ln -s /usr/local/Python-3.11.9 /usr/bin/python
+
+# Set the PATH environment variable with the path to the Python 3.11.9 binary
+ENV PATH="/usr/local/Python-3.11.9:${PATH}"
+
 # Set JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 
@@ -68,18 +73,17 @@ RUN curl -L https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.27.9/
 # Install Nano to edit files
 RUN apt update && apt install -y nano
 
-# Install PyFlink
-RUN pip3 install --upgrade pip
-RUN pip3 install pipenv
-RUN pip3 install "grpcio-tools>=1.29.0,<=1.50.0"
-RUN pip3 install setuptools>=37.0.0
-RUN pip3 install apache-flink==1.20.0
-RUN pip3 install "pyiceberg[s3fs,hive,pandas]"
-RUN pip3 install boto3
-RUN pip3 install botocore
-RUN pip3 install confluent-kafka==2.5.3
-RUN pip3 install s3fs
-RUN pip3 install utils
+# Install PyFlink, PyIceberg, AWS SDK, and other Python dependencies
+RUN python3.11 -m pip install --upgrade pip
+RUN python3.11 -m pip install pipenv
+RUN python3.11 -m venv .venv
+RUN . .venv/bin/activate
+RUN pipenv --python 3.11 install "grpcio-tools>=1.29.0,<=1.50.0"
+RUN pipenv --python 3.11 install setuptools>=37.0.0
+RUN pipenv --python 3.11 install apache-flink==1.20.0
+RUN pipenv --python 3.11 install pyiceberg
+RUN pipenv --python 3.11 install boto3
+RUN pipenv --python 3.11 install s3fs
 
 # Set the entrypoint to Flink's entrypoint script
 ENTRYPOINT ["/docker-entrypoint.sh"]
