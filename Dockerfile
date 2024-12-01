@@ -57,13 +57,13 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 # Download JARs to FLINK_HOME/lib to make them available to Flink
 # ---
 # --- Iceberg Flink Library
-RUN curl -L https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-flink-runtime-1.19/1.6.1/iceberg-flink-runtime-1.19-1.6.1.jar -o /opt/flink/lib/iceberg-flink-runtime-1.19-1.6.1.jar
+RUN curl -L https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-flink-runtime-1.20/1.7.0/iceberg-flink-runtime-1.20-1.7.0.jar -o /opt/flink/lib/iceberg-flink-runtime-1.20-1.7.0.jar
 
 # --- Hive Flink Library
 RUN curl -L https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-hive-3.1.3_2.12/1.20.0/flink-sql-connector-hive-3.1.3_2.12-1.20.0.jar -o /opt/flink/lib/flink-sql-connector-hive-3.1.3_2.12-1.20.0.jar
 
 # --- Hadoop Common Classes
-RUN curl -L https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.4.0/hadoop-common-3.4.0.jar -o /opt/flink/lib/hadoop-common-3.4.0.jar
+RUN curl -L https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.4.1/hadoop-common-3.4.1.jar -o /opt/flink/lib/hadoop-common-3.4.1.jar
 
 # --- Hadoop AWS Classes
 RUN curl -L https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.8.3-10.0/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar -o /opt/flink/lib/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar 
@@ -88,11 +88,14 @@ RUN pipenv --python 3.11 install boto3
 RUN pipenv --python 3.11 install botocore==1.35.16
 RUN pipenv --python 3.11 install aiobotocore==2.15.0
 RUN pipenv --python 3.11 install s3fs
+RUN pipenv --python 3.11 install google-api-python-client
+RUN pipenv --python 3.11 install pyflink
+RUN pipenv --python 3.11 install py4j==0.10.9.7
 
-# This action forces the installation of the latest version of the AWS SDK
+# This action forces the installation of the latest version of the AWS SDK and PyFlink
 RUN pip install boto3
-
-#
+RUN pip install apache-flink==1.20.0
+RUN pip install pyflink
 RUN pip install google-api-python-client
 
 # Set the entrypoint to Flink's entrypoint script
